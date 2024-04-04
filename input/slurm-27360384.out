@@ -1,0 +1,5 @@
+/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Compiler/intel2020/openmpi/4.0.3/bin/mpiexec
+/scratch/jxchang/HighRes2/results/TideU048sinN0012H200ho140GauRidParHeada1600b500Ah0200Kh0200_freeslipBotSide_Cdqdt001/input
+-rwxr-x--- 1 jxchang jxchang 1720008 Mar 20 18:33 ../build/mitgcmuv
+Starting: /scratch/jxchang/HighRes2/results/TideU048sinN0012H200ho140GauRidParHeada1600b500Ah0200Kh0200_freeslipBotSide_Cdqdt001
+slurmstepd: error: *** JOB 27360384 ON cdr2398 CANCELLED AT 2024-03-22T02:16:34 DUE TO TIME LIMIT ***
