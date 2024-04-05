@@ -95,16 +95,16 @@ ds1['drL']=grid.interp(ds1.drF, 'Z', to='left', boundary='extrapolate')
 # 1 for dudx and dvdy, 2 for dvdx and dudy, 31 for dwdx, 32 for dwdy
 # separately calculate because grids are different
 hDispbc1 = rhoNil*viscAh*(((grid.diff(ds1.upW* ds1.dyG , 'X', boundary='extrapolate')/ds1.rA)**2\
-                           #+(grid.diff(ds1.vpS* ds1.dxG , 'Y', boundary='extrapolate')/ds1.rA)**2
+                           +(grid.diff(ds1.vpS* ds1.dxG , 'Y', boundary='extrapolate')/ds1.rA)**2
                            )*(ds1['drF']*ds1['hFacC'])).sum('Z')  #dudx & dvdy
 hDispbc2 = rhoNil*viscAh*(((grid.diff(ds1.vpS* ds1.dyC , 'X', boundary='extrapolate')/ds1.rAz)**2\
-                           #+(grid.diff(ds1.upW* ds1.dxC , 'Y', boundary='extrapolate')/ds1.rAz)**2
+                           +(grid.diff(ds1.upW* ds1.dxC , 'Y', boundary='extrapolate')/ds1.rAz)**2
                            )*(ds1['drF']*ds1['hFacZ'])).sum('Z') #dvdx & dudy
 dvdx=xr.DataArray(hDispbc2.values,coords=[ds1.time.values,yc,xc],dims=["time","YC","XC"])
 print('dvdx')
 print(dvdx)
 hDispbc31 = rhoNil*viscAh*(((grid.diff(wp ,'X',boundary='extrapolate')/ds1.dxC)**2)*(ds1['drL']*ds1['hFacWL'])).sum('Zl')  #dwdx
-#hDispbc32 = rhoNil*viscAh*(((grid.diff(wp ,'Y',boundary='extrapolate')/ds1.dyC)**2)*(ds1['drL']*ds1['hFacSL'])).sum('Zl')  #dwdy
+hDispbc32 = rhoNil*viscAh*(((grid.diff(wp ,'Y',boundary='extrapolate')/ds1.dyC)**2)*(ds1['drL']*ds1['hFacSL'])).sum('Zl')  #dwdy
 
 # tidally averaged
 ta_hDispbc1 = hDispbc1.groupby_bins('time',time_bin,labels=time_bin_labels).mean()
@@ -112,11 +112,10 @@ ta_hDispbc2 = dvdx.groupby_bins('time',time_bin,labels=time_bin_labels).mean()
 print('ta dvdx')
 print(ta_hDispbc2)
 ta_hDispbc31 = hDispbc31.groupby_bins('time',time_bin,labels=time_bin_labels).mean()
-#ta_hDispbc32 = hDispbc32.groupby_bins('time',time_bin,labels=time_bin_labels).mean()
+ta_hDispbc32 = hDispbc32.groupby_bins('time',time_bin,labels=time_bin_labels).mean()
 
-ta_hDispbc = ta_hDispbc1+ta_hDispbc2+grid.interp(ta_hDispbc31,'X',boundary='extrapolate') 
-#grid.interp(ta_hDispbc2,['X','Y'],boundary='extrapolate') \
-                        #+grid.interp(ta_hDispbc32,'Y',boundary='extrapolate')
+ta_hDispbc = ta_hDispbc1+ta_hDispbc2+grid.interp(ta_hDispbc31,'X',boundary='extrapolate') \
+                        +grid.interp(ta_hDispbc32,'Y',boundary='extrapolate')
 print('ta_hDispbc'+str(ta_hDispbc))
 
 
@@ -143,7 +142,7 @@ Fybt=xr.DataArray(rhoNil*Fybt.values, coords=[ds2.time.values,yg,xc], dims=['tim
 ta_Fxbt=Fxbt.groupby_bins('time',time_bin,labels=time_bin_labels).mean()
 ta_Fybt=Fybt.groupby_bins('time',time_bin,labels=time_bin_labels).mean()
 hd_ta_Fbt=(grid.diff(ta_Fxbt*ds2['dyG'],'X',boundary='extrapolate'))/ds2['rA'] 
-#+grid.diff(ta_Fybt*ds2['dxG'],'Y',boundary='extrapolate')
++grid.diff(ta_Fybt*ds2['dxG'],'Y',boundary='extrapolate')
 
 # hdFbc
 uPbc=xr.DataArray(rhoNil*ds2['SDIAG6'].data, coords=[ds2.time.values,yc,xg], dims=['time','YC','XG'])
@@ -158,7 +157,7 @@ ta_Fxbc=Fxbc.groupby_bins('time',time_bin,labels=time_bin_labels).mean()
 ta_Fybc=Fybc.groupby_bins('time',time_bin,labels=time_bin_labels).mean()
 #print(Fbc)
 hd_ta_Fbc=(grid.diff(ta_Fxbc*ds2['dyG'],'X',boundary='extrapolate'))/ds2['rA'] 
-#+grid.diff(ta_Fybc*ds2['dxG'],'Y',boundary='extrapolate')
++grid.diff(ta_Fybc*ds2['dxG'],'Y',boundary='extrapolate')
 del uPbc, vPbc, uEbc, vEbc, Fxbc, Fybc
 print('hd_ta_Fbc'+str(hd_ta_Fbc))
 
@@ -199,19 +198,19 @@ print('bottom_ind.chunks:')
 print(bottom_ind.chunks)
 
 UC=grid.interp(ds1.UVEL,'X', boundary='extrapolate')
-#VC=grid.interp(ds1.VVEL,'Y', boundary='extrapolate')
+VC=grid.interp(ds1.VVEL,'Y', boundary='extrapolate')
 U0C=((UC*ds1['drF']*ds1['hFacC']).sum('Z'))/(ds1.drF*ds1.hFacC*ds1.maskC).sum('Z')
-#V0C=((VC*ds1['drF']*ds1['hFacC']).sum('Z'))/(ds1.drF*ds1.hFacC*ds1.maskC).sum('Z')
+V0C=((VC*ds1['drF']*ds1['hFacC']).sum('Z'))/(ds1.drF*ds1.hFacC*ds1.maskC).sum('Z')
 wC = grid.interp(ds1.WVEL,'Z', boundary='extrapolate')
 Ubot=UC.isel(Z=bottom_ind)
-#Vbot=VC.isel(Z=bottom_ind)
+Vbot=VC.isel(Z=bottom_ind)
 wbot=wC.isel(Z=bottom_ind)
 
 upCbot=(Ubot-U0C)  #baroclinic bottom velocity
-#vpCbot=(Vbot-V0C)
-absuH=(Ubot**2)**0.5#+Vbot**2
-D0=rhoNil*Cd*absuH*(Ubot*U0C)#+Vbot*V0C)
-Dp=rhoNil*Cd*absuH*(Ubot*upCbot+wbot*wbot) #Vbot*vpCbot
+vpCbot=(Vbot-V0C)
+absuH=(Ubot**2)**0.5+Vbot**2
+D0=rhoNil*Cd*absuH*(Ubot*U0C+Vbot*V0C)
+Dp=rhoNil*Cd*absuH*(Ubot*upCbot+wbot*wbot+Vbot*vpCbot)
 print('Dp:')
 print(Dp)
 print('D0:')
