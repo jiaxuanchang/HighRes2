@@ -1,0 +1,5 @@
+/cvmfs/soft.computecanada.ca/easybuild/software/2023/x86-64-v3/Compiler/gcc12/openmpi/4.1.5/bin/mpiexec
+/scratch/jxchang/HighRes2/results/TideU004sinN0012H200ho140GauRidParHeada640000b500Ah0200Kh0200_freeslipBotSide_Cdqdt001/input
+-rwxr-x--- 1 jxchang jxchang 1720008 Apr  7 20:33 ../build/mitgcmuv
+Starting: /scratch/jxchang/HighRes2/results/TideU004sinN0012H200ho140GauRidParHeada640000b500Ah0200Kh0200_freeslipBotSide_Cdqdt001
+slurmstepd: error: *** JOB 29520434 ON cdr2186 CANCELLED AT 2024-04-22T07:46:59 DUE TO TIME LIMIT ***
